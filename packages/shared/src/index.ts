@@ -40,5 +40,5 @@ export {
   getShapeConnectionPoints,
   reconnectWpsHost,
 } from './shapes/wps-api-bridge';
-// Supabase 客户端
-export { supabase } from './supabase/client';
+// Supabase 客户端（依赖 Vite env，由 editor-ui 独立导入）
+// export { supabase } from './supabase/client';

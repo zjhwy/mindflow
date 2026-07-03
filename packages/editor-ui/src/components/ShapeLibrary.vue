@@ -138,8 +138,8 @@ const categories = [
   { id: ShapeCategory.BASIC_SHAPES, name: '基本形状', icon: '⬡' },
   { id: ShapeCategory.ARROWS, name: '箭头', icon: '→' },
   { id: ShapeCategory.FLOWCHART, name: '流程图', icon: '🔲' },
-  { id: ShapeCategory.STARS, name: '星形', icon: '★' },
-  { id: ShapeCategory.CALLouts, name: '标注', icon: '💬' },
+  { id: ShapeCategory.STARS_FLAGS, name: '星形', icon: '★' },
+  { id: ShapeCategory.CALLOUTS, name: '标注', icon: '💬' },
 ];
 
 const activeCategory = ref('all');

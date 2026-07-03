@@ -9,7 +9,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       '@mindflow/editor-core': resolve(__dirname, '../editor-core/src'),
-      '@mindflow/shared': resolve(__dirname, '../shared/dist'),
+      '@mindflow/shared': resolve(__dirname, '../shared/src'),
     },
   },
   server: {

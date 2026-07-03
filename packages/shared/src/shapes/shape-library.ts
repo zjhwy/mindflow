@@ -576,3 +576,6 @@ export function getShapeCategories(): Array<{ category: ShapeCategory; name: str
 
 /** 形状总数 */
 export const TOTAL_SHAPE_COUNT = ALL_SHAPES.length;
+
+/** 重新导出类型供外部使用 */
+export type { ShapeEntry } from '../types';
