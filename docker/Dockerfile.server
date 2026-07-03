@@ -1,0 +1,16 @@
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/api-server/package.json ./packages/api-server/
+RUN corepack enable && pnpm install --frozen-lockfile
+COPY packages/shared ./packages/shared
+COPY packages/api-server ./packages/api-server
+RUN pnpm --filter @mindflow/api-server build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/packages/api-server/dist ./dist
+COPY --from=builder /app/packages/api-server/node_modules ./node_modules
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

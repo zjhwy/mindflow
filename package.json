@@ -1,0 +1,33 @@
+{
+  "name": "mindflow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MindFlow - 企业级思维导图与流程图编辑平台 (zjhdml.online)",
+  "scripts": {
+    "dev:core": "pnpm --filter @mindflow/editor-core dev",
+    "dev:ui": "pnpm --filter @mindflow/editor-ui dev",
+    "dev:server": "pnpm --filter @mindflow/api-server dev",
+    "build:all": "pnpm -r run build",
+    "build:core": "pnpm --filter @mindflow/editor-core build",
+    "build:ui": "pnpm --filter @mindflow/editor-ui build",
+    "build:server": "pnpm --filter @mindflow/api-server build",
+    "test:all": "pnpm -r run test",
+    "test:core": "pnpm --filter @mindflow/editor-core test",
+    "lint": "pnpm -r run lint",
+    "clean": "pnpm -r run clean",
+    "docker:build": "docker-compose -f docker/docker-compose.yml build",
+    "docker:up": "docker-compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f docker/docker-compose.yml down",
+    "perf:test": "node scripts/perf-test.js",
+    "gray:deploy": "node scripts/gray-deploy.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.0"
+  }
+}

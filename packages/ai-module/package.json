@@ -1,0 +1,1 @@
+{"name":"@mindflow/ai-module","version":"1.0.0","private":true,"type":"module","main":"./dist/index.js","scripts":{"build":"tsc","dev":"tsc --watch","clean":"rimraf dist"},"dependencies":{"@mindflow/shared":"workspace:*"},"devDependencies":{"typescript":"^5.4.0","rimraf":"^5.0.0"}}
