@@ -151,7 +151,7 @@ export class AuthService implements OnModuleInit {
   // ==================== Validate ====================
 
   async validateUser(payload: JwtPayload): Promise<{ userId: string; username: string; role: string } | null> {
-    if (this.memoryMode) return this.findMemoryUserById(payload.userId);
+    if (this.memoryMode) return this.findMemoryUserById(payload.userId) ?? null;
 
     const { data } = await this.supabase.fromUsers()
       .select('id, username, role').eq('id', payload.userId).maybeSingle();
@@ -204,10 +204,8 @@ export class AuthService implements OnModuleInit {
     };
   }
 
-  private issueTokensMemory(user: UserRecord): Promise<LoginResult> {
-    const result = this.issueTokens({ userId: user.userId, username: user.username, role: user.role });
-    // Already handled memory mode inside issueTokens
-    return result;
+  private issueTokensMemory(user: { userId: string; username: string; role: string }): Promise<LoginResult> {
+    return this.issueTokens({ userId: user.userId, username: user.username, role: user.role });
   }
 
   private findMemoryUserById(userId: string): { userId: string; username: string; role: string } | undefined {
