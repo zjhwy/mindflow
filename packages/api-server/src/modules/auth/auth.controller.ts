@@ -1,19 +1,30 @@
 import { Controller, Post, Body, HttpCode, UseGuards, Req, Headers } from '@nestjs/common';
+import { IsString, MinLength, MaxLength } from 'class-validator';
 import { AuthService } from './auth.service';
 import { ApiResponse } from '../../shared/api.types';
 import { JwtAuthGuard, Roles } from './auth.guard';
 
 class RegisterDto {
+  @IsString()
+  @MinLength(2)
+  @MaxLength(30)
   username!: string;
+
+  @IsString()
+  @MinLength(6)
   password!: string;
 }
 
 class LoginDto {
+  @IsString()
   username!: string;
+
+  @IsString()
   password!: string;
 }
 
 class RefreshDto {
+  @IsString()
   refreshToken!: string;
 }
 

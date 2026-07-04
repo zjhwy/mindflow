@@ -46,9 +46,7 @@ async function bootstrap() {
   // 全局管道 (DTO 验证)
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       // 过滤未声明的字段
       transform: true,       // 自动类型转换
-      forbidNonWhitelisted: true,
       transformOptions: { enableImplicitConversion: true },
     }),
   );
