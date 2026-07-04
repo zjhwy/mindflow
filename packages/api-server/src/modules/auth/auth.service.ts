@@ -61,7 +61,7 @@ export class AuthService implements OnModuleInit {
       if (existing) return;
 
       await this.supabase.fromUsers().insert({
-        username: adminUser, password_hash: hash, role: 'admin',
+        username: adminUser, email: adminUser + '@mindflow.local', password_hash: hash, role: 'admin',
       });
       this.logger.log('[Auth] Default admin user seeded to Supabase');
     } catch (err: any) {
@@ -89,7 +89,7 @@ export class AuthService implements OnModuleInit {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const { data, error } = await this.supabase.fromUsers()
-      .insert({ username, password_hash: passwordHash, role: 'editor' })
+      .insert({ username, email: username + '@mindflow.local', password_hash: passwordHash, role: 'editor' })
       .select('id, username').single();
 
     if (error) throw new UnauthorizedException(`注册失败: ${error.message}`);
