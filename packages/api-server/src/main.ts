@@ -5,6 +5,25 @@ import { ResponseInterceptor } from './common/response.interceptor';
 import { AllExceptionFilter } from './common/exception.filter';
 import { requestIdMiddleware } from './common/request-id.middleware';
 
+// ===== PG TLS SNI Fix: Monkey-patch pg 驱动的 upgradeToSSL =====
+// Supabase PgBouncer 通过 TLS SNI 识别项目，部分环境下 pg 驱动未正确传递 servername
+try {
+  const pg = require('pg');
+  const originalUpgrade = pg.Connection.prototype.upgradeToSSL;
+  pg.Connection.prototype.upgradeToSSL = function (ssl: any, callback?: any) {
+    const host = this.host;
+    // 强制确保 servername 被设置（用于 Supabase TLS SNI 租户路由）
+    if (typeof ssl === 'object' && ssl !== null && host && host.includes('.')) {
+      ssl = Object.assign({}, ssl, { servername: host });
+    }
+    return originalUpgrade.call(this, ssl, callback);
+  };
+  Logger.log('[PG-SNI-FIX] Monkey-patched pg.Connection.upgradeToSSL', 'Bootstrap');
+} catch (e: any) {
+  Logger.warn(`[PG-SNI-FIX] Failed to patch pg: ${e.message}`, 'Bootstrap');
+}
+// ===== END PG TLS SNI Fix =====
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
