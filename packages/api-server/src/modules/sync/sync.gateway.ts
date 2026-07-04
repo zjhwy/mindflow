@@ -13,7 +13,7 @@ import { Logger } from '@nestjs/common';
 import { Operation } from '@mindflow/shared';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from '../modules/auth/auth.service';
+import { JwtPayload } from '../auth/auth.service';
 
 interface RoomMember {
   socketId: string;
