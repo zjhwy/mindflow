@@ -29,37 +29,49 @@ export class SupabaseService implements OnModuleInit {
     }
   }
 
+  isAvailable(): boolean {
+    return this.client !== null;
+  }
+
   getClient(): SupabaseClient {
+    if (!this.client) {
+      throw new Error('Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
+    }
     return this.client;
   }
 
   // --- Users ---
   fromUsers() {
-    return this.client.from('users');
+    return this.getClient().from('users');
+  }
+
+  // --- Refresh Tokens ---
+  fromRefreshTokens() {
+    return this.getClient().from('refresh_tokens');
   }
 
   // --- Documents ---
   fromDocuments() {
-    return this.client.from('documents');
+    return this.getClient().from('documents');
   }
 
   // --- Nodes ---
   fromNodes() {
-    return this.client.from('nodes');
+    return this.getClient().from('nodes');
   }
 
   // --- Recycle ---
   fromRecycle() {
-    return this.client.from('recycle_items');
+    return this.getClient().from('recycle_items');
   }
 
   // --- Snapshots ---
   fromSnapshots() {
-    return this.client.from('snapshots');
+    return this.getClient().from('snapshots');
   }
 
   // --- Operations Log ---
   fromOperationLogs() {
-    return this.client.from('operation_logs');
+    return this.getClient().from('operation_logs');
   }
 }
