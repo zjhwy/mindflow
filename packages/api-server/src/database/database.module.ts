@@ -25,7 +25,12 @@ import {
         entities: [UserEntity, DocumentEntity, RecycleItemEntity, SnapshotEntity, OperationLogEntity],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
         logging: config.get<string>('DB_LOGGING') === 'true',
-        ssl: config.get<string>('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+        ssl: config.get<string>('DB_SSL') === 'true'
+          ? {
+              rejectUnauthorized: false,
+              servername: config.get<string>('DB_HOST', 'localhost'),
+            }
+          : false,
       }),
     }),
     TypeOrmModule.forFeature([
