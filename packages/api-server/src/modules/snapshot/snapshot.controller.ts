@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Put, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Put, Param, Body, Query, Req, UseGuards } from '@nestjs/common';
 import { SnapshotService } from './snapshot.service';
-import { ApiResponse } from '../../shared/api.types';
+import { ApiResponse } from '@mindflow/shared';
 import { JwtAuthGuard, Roles } from '../auth/auth.guard';
 
 @Controller('documents')

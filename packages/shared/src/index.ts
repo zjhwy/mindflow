@@ -1,3 +1,11 @@
+export interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+  requestId: string;
+  timestamp: number;
+}
+
 export type {
   InnerLine, InnerTreeOptions, LineStyle, Operation, ViewportRange,
   HistoryAction, GanttLineExt, CalendarLineExt, LineMetadata,

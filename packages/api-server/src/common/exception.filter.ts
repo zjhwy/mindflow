@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiResponse } from '../../shared/api.types';
+import { ApiResponse } from '@mindflow/shared';
 
 /**
  * 全局异常过滤器

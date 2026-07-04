@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponse } from '../../shared/api.types';
+import { ApiResponse } from '@mindflow/shared';
 
 /**
  * 统一响应包裹拦截器

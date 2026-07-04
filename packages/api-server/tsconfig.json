@@ -16,7 +16,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@mindflow/shared": ["../shared/src"]
+      "@mindflow/shared": ["../shared/dist"]
     }
   },
   "include": ["src"],

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Delete, Param, Query, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Query, Body, Req, UseGuards } from '@nestjs/common';
 import { RecycleService, SoftDeleteDto, RecycleListQuery } from './recycle.service';
-import { ApiResponse } from '../../shared/api.types';
+import { ApiResponse } from '@mindflow/shared';
 import { JwtAuthGuard, Roles } from '../auth/auth.guard';
 
 @Controller()

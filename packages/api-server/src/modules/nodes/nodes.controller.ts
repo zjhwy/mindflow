@@ -1,8 +1,8 @@
 import {
-  Controller, Get, Post, Put, Delete, Patch, Param, Body, Query, UseGuards,
+  Controller, Get, Post, Put, Delete, Patch, Param, Body, Query, Req, UseGuards,
 } from '@nestjs/common';
 import { NodesService, CreateDocumentDto, CreateLinesDto, UpdateLineDto, ReorderLinesDto, BatchSyncDto, PaginationDto, PaginatedResult } from './nodes.service';
-import { ApiResponse } from '../../shared/api.types';
+import { ApiResponse } from '@mindflow/shared';
 import { JwtAuthGuard, Roles } from '../auth/auth.guard';
 
 @Controller()
