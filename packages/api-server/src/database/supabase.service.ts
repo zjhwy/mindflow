@@ -19,6 +19,14 @@ export class SupabaseService implements OnModuleInit {
         return;
       }
 
+      // Node.js 20 没有原生 WebSocket，用 ws polyfill
+      try {
+        const ws = require('ws');
+        (global as any).WebSocket = ws;
+      } catch {
+        // ws not installed, supabase-js will throw below
+      }
+
       this.client = createClient(url, key, {
         auth: { autoRefreshToken: false, persistSession: false },
       });
