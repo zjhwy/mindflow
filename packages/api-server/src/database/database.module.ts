@@ -18,10 +18,12 @@ import {
       useFactory: (config: ConfigService) => {
         const isSSL = config.get<string>('DB_SSL') === 'true';
         const host = config.get<string>('DB_HOST', 'localhost');
+        // DB_SNI_HOST: Supabase 项目域名用于 TLS SNI 路由（不同于 DB_HOST 的连接地址）
+        const sniHost = config.get<string>('DB_SNI_HOST', host);
         const sslConfig = isSSL
           ? {
               rejectUnauthorized: false,
-              servername: host,
+              servername: sniHost,
             }
           : false;
 
@@ -36,11 +38,10 @@ import {
           synchronize: config.get<string>('NODE_ENV') !== 'production',
           logging: config.get<string>('DB_LOGGING') === 'true',
           ssl: sslConfig,
-          // extra 直接透传给 pg Pool，作为 twin-guarantee
           extra: isSSL ? {
             ssl: {
               rejectUnauthorized: false,
-              servername: host,
+              servername: sniHost,
             },
           } : {},
         };
