@@ -2,7 +2,8 @@
  * 预设模板数据
  * 包含：思维导图、流程图、组织架构、时间轴、鱼骨图等模板
  */
-import type { InnerLine, MindLayoutType } from '@mindflow/shared';
+import type { InnerLine } from '@mindflow/shared';
+import { MindLayoutType } from '@mindflow/shared';
 
 export interface TemplateCategory {
   id: string;
