@@ -266,6 +266,67 @@ export interface FlowConnection {
   toAnchor?: string;
 }
 
+// ============================================================
+// Connection：思维导图独立连线系统
+// 允许任意两个节点之间创建自由连线，不受父子树形结构限制
+// ============================================================
+
+/** 连线样式配置 */
+export interface ConnectionStyle {
+  color?: string;
+  strokeWidth?: number;
+  dashArray?: string;     // 如 '5,5' 虚线, '1,3' 点线
+  opacity?: number;
+}
+
+/** 思维导图节点间独立连线 */
+export interface Connection {
+  connectionId: string;
+  documentId: string;
+  fromLineId: LineId;
+  toLineId: LineId;
+  connectorType: WpsConnectorType;
+  /** 连线标签（显示在连线中段） */
+  label?: string;
+  /** 箭头方向 */
+  arrowDirection?: 'forward' | 'backward' | 'both' | 'none';
+  /** 来源锚点位置 */
+  fromAnchor?: 'top' | 'right' | 'bottom' | 'left' | 'auto';
+  /** 目标锚点位置 */
+  toAnchor?: 'top' | 'right' | 'bottom' | 'left' | 'auto';
+  /** 连线路径（SVG path d-string，由布局引擎计算） */
+  path?: string;
+  /** 连线样式 */
+  style?: ConnectionStyle;
+  /** 创建者 */
+  userId?: UserId;
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** 连线创建 DTO */
+export interface CreateConnectionDto {
+  fromLineId: LineId;
+  toLineId: LineId;
+  connectorType?: WpsConnectorType;
+  label?: string;
+  arrowDirection?: 'forward' | 'backward' | 'both' | 'none';
+  fromAnchor?: string;
+  toAnchor?: string;
+  style?: ConnectionStyle;
+}
+
+/** 连线更新 DTO */
+export interface UpdateConnectionDto {
+  connectorType?: WpsConnectorType;
+  label?: string;
+  arrowDirection?: 'forward' | 'backward' | 'both' | 'none';
+  fromAnchor?: string;
+  toAnchor?: string;
+  path?: string;
+  style?: ConnectionStyle;
+}
+
 /** 流程图文档 */
 export interface FlowDocument {
   flowId: string;

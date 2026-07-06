@@ -8,6 +8,8 @@ import { AiModule } from './modules/ai/ai.module';
 import { RecycleModule } from './modules/recycle/recycle.module';
 import { SnapshotModule } from './modules/snapshot/snapshot.module';
 import { SyncModule } from './modules/sync/sync.module';
+import { ConnectionsModule } from './modules/connections/connections.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { SyncModule } from './modules/sync/sync.module';
     DatabaseModule,
     AuthModule,
     NodesModule,
+    ConnectionsModule,
+    AdminModule,
     SecurityModule,
     AiModule,
     RecycleModule,

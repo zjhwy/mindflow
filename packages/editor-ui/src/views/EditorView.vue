@@ -224,6 +224,7 @@ import TemplateMarket from '@/components/TemplateMarket.vue';
 import ShapeLibrary from '@/components/ShapeLibrary.vue';
 import { useKeyboard } from '@/composables/useKeyboard';
 import { exportMarkdown, exportJSON, parseMarkdown, parseJSON, downloadFile, readFileAsText } from '@/composables/useExport';
+import { templateToLines } from '@/data/templates';
 import { api } from '@/api/client';
 import type { LineStyle, WpsShapeType } from '@mindflow/shared';
 
@@ -624,8 +625,6 @@ function handleAiStyle(style: string) {
 
 // 模板市场处理
 function handleTemplateSelect(template: any) {
-  // 导入模板数据
-  const { templateToLines } = require('@/data/templates');
   const lines = templateToLines(template);
   mindmap.loadDocument(lines, undefined, template.name);
   mindmap.setLayout(template.layout);
@@ -694,6 +693,8 @@ async function loadDocument(fileId: string) {
         fileId,
         result.data.name,
       );
+      // 异步加载连线，不阻塞文档渲染
+      mindmap.loadConnections(fileId);
     }
   } catch (err) {
     mindmap.setStatus('加载文档失败');

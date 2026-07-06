@@ -495,7 +495,10 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
 import { calculateLayout, getBounds, computeSmartElbowPath } from '@mindflow/editor-core';
 import type { LayoutNode } from '@mindflow/editor-core';
-import type { InnerLine, MindLayoutType } from '@mindflow/shared';
+import type { InnerLine, MindLayoutType, Connection } from '@mindflow/shared';
+import { useMindmapStore } from '@/stores';
+
+const mindmap = useMindmapStore();
 
 const props = defineProps<{
   lines: InnerLine[];
@@ -1184,6 +1187,83 @@ const edges = computed<EdgeData[]>(() => {
       });
     }
   }
+
+  // ---- 独立连线（非父子关系）渲染 ----
+  for (const conn of mindmap.connections) {
+    const fromNode = map.get(conn.fromLineId);
+    const toNode = map.get(conn.toLineId);
+    if (!fromNode || !toNode) continue;
+
+    // 根据锚点计算起点/终点
+    const getAnchorPoint = (node: LayoutNode, anchor: string | undefined) => {
+      switch (anchor) {
+        case 'top': return { x: node.x + node.width / 2, y: node.y };
+        case 'bottom': return { x: node.x + node.width / 2, y: node.y + node.height };
+        case 'left': return { x: node.x, y: node.y + node.height / 2 };
+        case 'right': return { x: node.x + node.width, y: node.y + node.height / 2 };
+        default: {
+          // auto: 选择最近的边
+          const cx = node.x + node.width / 2;
+          const cy = node.y + node.height / 2;
+          const otherCx = (node === fromNode ? toNode : fromNode).x + (node === fromNode ? toNode : fromNode).width / 2;
+          const otherCy = (node === fromNode ? toNode : fromNode).y + (node === fromNode ? toNode : fromNode).height / 2;
+          const dx = otherCx - cx;
+          const dy = otherCy - cy;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            return dx > 0
+              ? { x: node.x + node.width, y: cy }
+              : { x: node.x, y: cy };
+          } else {
+            return dy > 0
+              ? { x: cx, y: node.y + node.height }
+              : { x: cx, y: node.y };
+          }
+        }
+      }
+    };
+
+    const fromPt = getAnchorPoint(fromNode, conn.fromAnchor);
+    const toPt = getAnchorPoint(toNode, conn.toAnchor);
+    const pathType = conn.connectorType?.startsWith('curve') ? 'curved'
+      : conn.connectorType?.startsWith('elbow') ? 'elbow'
+      : conn.connectorType?.startsWith('straight') ? 'straight'
+      : 'curved';
+
+    let path: string;
+    if (pathType === 'straight') {
+      path = `M${fromPt.x},${fromPt.y} L${toPt.x},${toPt.y}`;
+    } else if (pathType === 'elbow') {
+      const midX = (fromPt.x + toPt.x) / 2;
+      path = `M${fromPt.x},${fromPt.y} L${midX},${fromPt.y} L${midX},${toPt.y} L${toPt.x},${toPt.y}`;
+    } else {
+      // curved
+      const cx1 = fromPt.x + (toPt.x - fromPt.x) * 0.4;
+      const cx2 = fromPt.x + (toPt.x - fromPt.x) * 0.6;
+      path = `M${fromPt.x},${fromPt.y} C${cx1},${fromPt.y} ${cx2},${toPt.y} ${toPt.x},${toPt.y}`;
+    }
+
+    const labelX = (fromPt.x + toPt.x) / 2;
+    const labelY = (fromPt.y + toPt.y) / 2;
+
+    const hasArrow = conn.arrowDirection && conn.arrowDirection !== 'none';
+
+    result.push({
+      key: `conn-${conn.connectionId}`,
+      path,
+      color: conn.style?.color ?? '#722ed1',  // 紫色区分独立连线
+      strokeWidth: conn.style?.strokeWidth ?? 2,
+      dashArray: conn.style?.dashArray,
+      arrow: hasArrow,
+      label: conn.label,
+      labelX,
+      labelY,
+      startX: fromPt.x,
+      startY: fromPt.y,
+      endX: toPt.x,
+      endY: toPt.y,
+    });
+  }
+
   return result;
 });
 
@@ -1191,6 +1271,15 @@ const edges = computed<EdgeData[]>(() => {
 const visibleEdges = computed<EdgeData[]>(() => {
   if (scale.value < 0.3) return edges.value; // 极小缩放全渲染
   return edges.value.filter(e => {
+    // conn- 前缀的是独立连线，需要从 startX/startY 和 endX/endY 判断是否在视口内
+    if (e.key.startsWith('conn-')) {
+      // 检查连线端点是否在视口内
+      const [vsx, vsy] = screenToWorld(0, 0);
+      const [vex, vey] = screenToWorld(window.innerWidth, window.innerHeight);
+      const margin = 200;
+      return (e.startX >= vsx - margin && e.startX <= vex + margin && e.startY >= vsy - margin && e.startY <= vey + margin)
+        || (e.endX >= vsx - margin && e.endX <= vex + margin && e.endY >= vsy - margin && e.endY <= vey + margin);
+    }
     const [fromId, toId] = e.key.split('-');
     return visibleNodeIds.value.has(fromId) || visibleNodeIds.value.has(toId);
   });

@@ -4,13 +4,17 @@ import { resolve } from 'path';
 import { mockPlugin } from './vite-plugin-mock';
 
 export default defineConfig({
-  plugins: [vue(), mockPlugin()],
+  plugins: [
+    vue(),
+    mockPlugin(),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
       '@mindflow/editor-core': resolve(__dirname, '../editor-core/src'),
       '@mindflow/shared': resolve(__dirname, '../shared/src'),
     },
+    extensions: ['.vue', '.mjs', '.js', '.mts', '.ts', '.jsx', '.tsx', '.json'],
   },
   server: {
     port: 5173,

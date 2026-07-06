@@ -3,6 +3,7 @@
     <header class="home-header">
       <h1>MindFlow</h1>
       <div class="header-right">
+        <button v-if="auth.user?.role === 'admin'" class="btn-text btn-admin" @click="router.push('/admin')">管理后台</button>
         <span class="user-info">{{ auth.user?.username }}</span>
         <button class="btn-text" @click="router.push('/settings')">设置</button>
         <button class="btn-text" @click="handleLogout">退出</button>

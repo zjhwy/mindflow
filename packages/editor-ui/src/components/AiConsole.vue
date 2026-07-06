@@ -423,7 +423,7 @@ const ICON_MAP: Record<string, string> = {
 
 /** 形状匹配表 */
 const SHAPE_MAP: Record<string, string> = {
-  '开始': 'capsule', '启动': 'capsule', '完成': 'capsule', '结束': 'capsule', '开始': 'capsule',
+  '开始': 'capsule', '启动': 'capsule', '完成': 'capsule', '结束': 'capsule',
   '判断': 'flow-decision', '审核': 'flow-decision', '验证': 'flow-decision', '检查': 'flow-decision', '是否': 'flow-decision', '审批': 'flow-decision',
   '文档': 'parallelogram', '报告': 'parallelogram', '方案': 'parallelogram', '产出': 'parallelogram',
   '数据': 'cylinder', '存储': 'cylinder', '仓库': 'cylinder', '数据库': 'cylinder',

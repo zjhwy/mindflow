@@ -73,3 +73,27 @@ CREATE TABLE IF NOT EXISTS operation_logs (
 
 CREATE INDEX IF NOT EXISTS idx_operation_logs_user_id ON operation_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_operation_logs_created_at ON operation_logs(created_at);
+
+-- 8. 创建 connections 表（节点间独立连线，不受树形父子结构限制）
+CREATE TABLE IF NOT EXISTS connections (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  from_line_id UUID NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
+  to_line_id UUID NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
+  connector_type TEXT DEFAULT 'curved',
+  label TEXT,
+  arrow_direction TEXT DEFAULT 'none',
+  from_anchor TEXT,
+  to_anchor TEXT,
+  style JSONB DEFAULT '{}'::jsonb,
+  user_id UUID REFERENCES users(id),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  
+  CONSTRAINT uq_connection UNIQUE (document_id, from_line_id, to_line_id),
+  CONSTRAINT chk_self_connection CHECK (from_line_id <> to_line_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_connections_document_id ON connections(document_id);
+CREATE INDEX IF NOT EXISTS idx_connections_from_line_id ON connections(from_line_id);
+CREATE INDEX IF NOT EXISTS idx_connections_to_line_id ON connections(to_line_id);

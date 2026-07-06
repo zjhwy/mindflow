@@ -14,6 +14,7 @@ export type {
   RuleTriggerType, RuleActionType, EngineEvent, EngineCallback,
   // 新增：WPS 原生图形类型
   FlowNode, FlowConnection, FlowDocument,
+  Connection, ConnectionStyle, CreateConnectionDto, UpdateConnectionDto,
   ShapeEntry, WpsHostShapeData, AnchorPoint, InlineShape,
   SyncChangeEvent, SyncDirection, AiGenerationResult,
 } from './types';

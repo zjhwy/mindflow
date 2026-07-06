@@ -8,6 +8,7 @@ import type { Plugin, ViteDevServer } from 'vite';
 export function mockPlugin(): Plugin {
   return {
     name: 'vite-plugin-local-mock',
+    apply: 'serve', // 仅在 dev server 模式下生效
 
     configureServer(server: ViteDevServer) {
       // 在 Vite 内置中间件之前拦截 API 请求

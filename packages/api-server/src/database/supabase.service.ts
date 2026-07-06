@@ -82,4 +82,9 @@ export class SupabaseService implements OnModuleInit {
   fromOperationLogs() {
     return this.getClient().from('operation_logs');
   }
+
+  // --- Connections ---
+  fromConnections() {
+    return this.getClient().from('connections');
+  }
 }

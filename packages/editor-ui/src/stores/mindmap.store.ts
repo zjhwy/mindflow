@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { InnerTreeEngine } from '@mindflow/editor-core';
-import type { InnerLine, ViewMode, MindLayoutType } from '@mindflow/shared';
+import type { InnerLine, ViewMode, MindLayoutType, Connection, CreateConnectionDto, UpdateConnectionDto } from '@mindflow/shared';
+import { api } from '@/api/client';
 
 export const useMindmapStore = defineStore('mindmap', () => {
   // --- 引擎 ---
@@ -32,6 +33,10 @@ export const useMindmapStore = defineStore('mindmap', () => {
   const viewportTransform = ref({ x: 0, y: 0, scale: 1 });
   const targetTransform = ref({ x: 0, y: 0, scale: 1 });
   const isAnimating = ref(false);
+
+  // --- 连线系统 ---
+  /** 当前文档的独立连线列表（非父子关系） */
+  const connections = ref<Connection[]>([]);
 
   // ==================== Getters ====================
 
@@ -202,6 +207,78 @@ export const useMindmapStore = defineStore('mindmap', () => {
     selectedIds.value = [];
   }
 
+  // ==================== Actions: Connections ====================
+
+  /** 从后端加载文档的所有连线 */
+  async function loadConnections(documentId: string): Promise<void> {
+    if (!documentId) return;
+    try {
+      const res = await api.get<Connection[]>(`/documents/${documentId}/connections`);
+      if (res.code === 200) {
+        connections.value = res.data;
+      }
+    } catch {
+      // 静默失败，连线不是核心功能
+    }
+  }
+
+  /** 创建一条新连线 */
+  async function addConnection(dto: CreateConnectionDto): Promise<Connection | null> {
+    if (!currentFileId.value) return null;
+    try {
+      const res = await api.post<Connection>(`/documents/${currentFileId.value}/connections`, dto);
+      if (res.code === 201 && res.data) {
+        connections.value.push(res.data);
+        isDirty.value = true;
+        setStatus('已创建连线');
+        return res.data;
+      }
+    } catch {
+      setStatus('连线创建失败');
+    }
+    return null;
+  }
+
+  /** 更新连线样式/属性 */
+  async function updateConnection(connectionId: string, dto: UpdateConnectionDto): Promise<void> {
+    if (!currentFileId.value) return;
+    try {
+      const res = await api.put<Connection>(`/documents/${currentFileId.value}/connections/${connectionId}`, dto);
+      if (res.code === 200 && res.data) {
+        const idx = connections.value.findIndex(c => c.connectionId === connectionId);
+        if (idx !== -1) connections.value[idx] = res.data;
+        isDirty.value = true;
+        setStatus('连线已更新');
+      }
+    } catch {
+      setStatus('连线更新失败');
+    }
+  }
+
+  /** 删除连线 */
+  async function removeConnection(connectionId: string): Promise<void> {
+    if (!currentFileId.value) return;
+    try {
+      const res = await api.delete(`/documents/${currentFileId.value}/connections/${connectionId}`);
+      if (res.code === 200) {
+        connections.value = connections.value.filter(c => c.connectionId !== connectionId);
+        isDirty.value = true;
+        setStatus('已删除连线');
+      }
+    } catch {
+      setStatus('连线删除失败');
+    }
+  }
+
+  /** 初始化/清空连线列表 */
+  function setConnections(conns: Connection[]): void {
+    connections.value = conns;
+  }
+
+  function clearConnections(): void {
+    connections.value = [];
+  }
+
   function moveLineAsChild(lineId: string, newParentId: string): void {
     const allLines = engine.value?.getLines();
     if (!allLines) return;
@@ -271,6 +348,7 @@ export const useMindmapStore = defineStore('mindmap', () => {
     viewportTransform,
     targetTransform,
     isAnimating,
+    connections,
     // getters
     lines,
     totalLines,
@@ -303,5 +381,12 @@ export const useMindmapStore = defineStore('mindmap', () => {
     loadDocument,
     clear,
     moveLineAsChild,
+    // connection actions
+    loadConnections,
+    addConnection,
+    updateConnection,
+    removeConnection,
+    setConnections,
+    clearConnections,
   };
 });
